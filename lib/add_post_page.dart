@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 class AddPostPage extends StatelessWidget {
+  final Map<String, String>? post;
+  final String username;
   final TextEditingController _titleController;
   final TextEditingController _descriptionController;
-  final Map<String, String>? post;
 
-  AddPostPage({super.key, this.post})
+  AddPostPage({this.post, required this.username})
       : _titleController = TextEditingController(text: post?['title']),
-        _descriptionController = TextEditingController(text: post?['description']);
+        _descriptionController =
+            TextEditingController(text: post?['description']);
 
   void _submitPost(BuildContext context) {
     final title = _titleController.text;
     final description = _descriptionController.text;
 
     if (title.isNotEmpty && description.isNotEmpty) {
-      Navigator.pop(context, {'title': title, 'description': description});
+      Navigator.pop(context, {
+        'title': title,
+        'description': description,
+        'username': username, // Attach username to the post
+      });
     }
   }
 
@@ -30,15 +36,15 @@ class AddPostPage extends StatelessWidget {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: InputDecoration(labelText: 'Title'),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(labelText: 'Description'),
               maxLines: 3,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _submitPost(context),
               child: Text(post == null ? 'Submit' : 'Save Changes'),
@@ -49,4 +55,3 @@ class AddPostPage extends StatelessWidget {
     );
   }
 }
-

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'add_post_page.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String username;
+
+  HomePage({required this.username});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -15,7 +18,10 @@ class _HomePageState extends State<HomePage> {
     final updatedPost = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddPostPage(post: post),
+        builder: (context) => AddPostPage(
+          post: post,
+          username: widget.username,
+        ),
       ),
     );
 
@@ -36,32 +42,50 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _logout() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Food Sharing Posts'),
+        title: Text('Food Sharing Posts'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: posts.length,
         itemBuilder: (context, index) {
+          final post = posts[index];
+          final isPostOwner = post['username'] == widget.username;
+
           return Card(
             child: ListTile(
-              title: Text(posts[index]['title'] ?? ''),
-              subtitle: Text(posts[index]['description'] ?? ''),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () => _navigateToAddPostPage(post: posts[index], index: index),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deletePost(index),
-                  ),
-                ],
-              ),
+              title: Text(post['title'] ?? ''),
+              subtitle: Text("${post['description']} \nBy: ${post['username']}"),
+              trailing: isPostOwner
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _navigateToAddPostPage(post: post, index: index),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deletePost(index),
+                        ),
+                      ],
+                    )
+                  : null,
             ),
           );
         },
@@ -69,7 +93,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToAddPostPage(),
         tooltip: 'Add Post',
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
     );
   }
