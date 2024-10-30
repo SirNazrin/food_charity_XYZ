@@ -3,6 +3,8 @@ import 'home_page.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -56,38 +58,98 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
+        backgroundColor: Colors.teal, // Change to your preferred color
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 8, // Shadow effect for card
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12), // Rounded corners
             ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            if (_errorMessage != null) ...[
-              SizedBox(height: 10),
-              Text(
-                _errorMessage!,
-                style: TextStyle(color: Colors.red),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Wrap content
+                children: [
+                  Text(
+                    'Welcome Back!',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Colors.teal, // Main heading color
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.teal),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.teal, width: 2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.teal),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.teal, width: 2),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 10),
+                  if (_errorMessage != null) ...[
+                    Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _login,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal, // Button color
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white, // Change this to your desired color
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _navigateToSignUpPage,
+                    child: const Text(
+                      "Don't have an account? Sign Up",
+                      style: TextStyle(
+                        color: Colors.teal, // Change to your desired color
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: Text('Login'),
             ),
-            TextButton(
-              onPressed: _navigateToSignUpPage,
-              child: Text("Don't have an account? Sign Up"),
-            ),
-          ],
+          ),
         ),
       ),
     );

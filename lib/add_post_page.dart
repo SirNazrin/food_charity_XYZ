@@ -6,7 +6,7 @@ class AddPostPage extends StatelessWidget {
   final TextEditingController _titleController;
   final TextEditingController _descriptionController;
 
-  AddPostPage({this.post, required this.username})
+  AddPostPage({super.key, this.post, required this.username})
       : _titleController = TextEditingController(text: post?['title']),
         _descriptionController =
             TextEditingController(text: post?['description']);
@@ -26,32 +26,37 @@ class AddPostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(post == null ? 'Add New Post' : 'Edit Post'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return AlertDialog(
+      title: Text(post == null ? 'Add New Post' : 'Edit Post'),
+      content: SizedBox(
+        height: 200, // Adjust the height as necessary
         child: Column(
           children: [
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(labelText: 'Description'),
               maxLines: 3,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _submitPost(context),
-              child: Text(post == null ? 'Submit' : 'Save Changes'),
             ),
           ],
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Close the dialog without saving
+          },
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () => _submitPost(context),
+          child: Text(post == null ? 'Submit' : 'Save Changes'),
+        ),
+      ],
     );
   }
 }

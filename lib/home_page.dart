@@ -5,7 +5,7 @@ import 'login_page.dart';
 class HomePage extends StatefulWidget {
   final String username;
 
-  HomePage({required this.username});
+  const HomePage({super.key, required this.username});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -15,26 +15,25 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, String>> posts = [];
 
   void _navigateToAddPostPage({Map<String, String>? post, int? index}) async {
-    final updatedPost = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddPostPage(
-          post: post,
-          username: widget.username,
-        ),
-      ),
-    );
+  final updatedPost = await showDialog<Map<String, String>>(
+    context: context,
+    builder: (context) => AddPostPage(
+      post: post,
+      username: widget.username,
+    ),
+  );
 
-    if (updatedPost != null) {
-      setState(() {
-        if (index != null) {
-          posts[index] = updatedPost; // Update existing post
-        } else {
-          posts.add(updatedPost); // Add new post
-        }
-      });
-    }
+  if (updatedPost != null) {
+    setState(() {
+      if (index != null) {
+        posts[index] = updatedPost; // Update existing post
+      } else {
+        posts.add(updatedPost); // Add new post
+      }
+    });
   }
+}
+
 
   void _deletePost(int index) {
     setState(() {
@@ -45,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   void _logout() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
 
@@ -53,47 +52,92 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food Sharing Posts'),
+        title: const Text('Food Sharing Posts'),
+        backgroundColor: Colors.teal, // AppBar color
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: _logout,
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-          final post = posts[index];
-          final isPostOwner = post['username'] == widget.username;
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal.shade100, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView.separated(
+            itemCount: posts.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 16), // Space between cards
+            itemBuilder: (context, index) {
+              final post = posts[index];
+              final isPostOwner = post['username'] == widget.username;
 
-          return Card(
-            child: ListTile(
-              title: Text(post['title'] ?? ''),
-              subtitle: Text("${post['description']} \nBy: ${post['username']}"),
-              trailing: isPostOwner
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => _navigateToAddPostPage(post: post, index: index),
+              return Card(
+                elevation: 8, // Slightly higher shadow for card
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // More rounded corners
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        post['title'] ?? '',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
                         ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deletePost(index),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        post['description'] ?? '',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "By: ${post['username']}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
                         ),
-                      ],
-                    )
-                  : null,
-            ),
-          );
-        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (isPostOwner)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => _navigateToAddPostPage(post: post, index: index),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deletePost(index),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToAddPostPage(),
         tooltip: 'Add Post',
-        child: Icon(Icons.add),
+        backgroundColor: Colors.teal, // FAB color
+        child: const Icon(Icons.add),
       ),
     );
   }
